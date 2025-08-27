@@ -1,13 +1,12 @@
 import gradio as gr
 
 
-# Updated placeholder for the prediction function
+# 📌 FUNCTIONS
 def predict(mode, text, image_path):
     """
     This placeholder function now returns a dictionary
     in the format expected by the gr.Label component.
     """
-    # Hardcoded, sample output. In the future, this will come from your model.
     multimodal_output = {
         "abcat0100000": 0.05,
         "abcat0200000": 0.10,
@@ -37,11 +36,10 @@ def predict(mode, text, image_path):
     elif mode == "Image Only":
         return image_only_output
     else:
-        return {}  # Return an empty dictionary for no selection
+        return {}
 
 
-# Function to update input visibility based on mode selection
-def update_inputs(mode):
+def update_inputs(mode: str):
     if mode == "Multimodal":
         return gr.Textbox(visible=True), gr.Image(visible=True)
     elif mode == "Text Only":
@@ -52,76 +50,119 @@ def update_inputs(mode):
         return gr.Textbox(visible=True), gr.Image(visible=True)
 
 
-# Gradio Interface using Blocks
-with gr.Blocks(title="Multimodal Product Classification") as demo:
+# 📌 USER INTERFACE
+with gr.Blocks(
+    title="Multimodal Product Classification",
+    theme=gr.themes.Ocean(),
+) as demo:
     with gr.Tabs():
+        # 📌 APP TAB
         with gr.TabItem("App"):
-            gr.Markdown("# Multimodal Product Classifier")
-            gr.Markdown("Classify products using either text, images, or both.")
+            gr.Markdown("# 🛍️ Multimodal Product Classification")
 
-            with gr.Row():
-                with gr.Column(scale=1):
-                    with gr.Column(variant="panel"):
-                        gr.Markdown("### ⚙️ Classification Inputs")
+            with gr.Row(equal_height=True):
+                with gr.Column():
+                    with gr.Column():
+                        gr.Markdown("## ⚙️ Classification Inputs")
 
                         mode_radio = gr.Radio(
                             choices=["Multimodal", "Text Only", "Image Only"],
                             value="Multimodal",
-                            label="Choose Classification Mode",
+                            label="Choose Classification Mode:",
                         )
 
                         text_input = gr.Textbox(
-                            label="Product Description",
+                            label="Product Description:",
                             placeholder="e.g., Apple iPhone 15 Pro Max 256GB",
                         )
+
                         image_input = gr.Image(
-                            label="Product Image", type="filepath", visible=True
+                            label="Product Image",
+                            type="filepath",
+                            visible=True,
+                            height=300,
+                            width="100%",
                         )
 
-                    classify_btn = gr.Button("🚀 Classify Product", variant="primary")
-
-                with gr.Column(scale=1):
-                    with gr.Column(variant="panel"):
-                        gr.Markdown("### 📊 Classification Results")
-
-                        output_label = gr.Label(
-                            label="Predicted Category", num_top_classes=5
+                        classify_button = gr.Button(
+                            "✨ Classify Product", variant="primary"
                         )
 
-                    with gr.Accordion("How to use this demo", open=False):
+                with gr.Column():
+                    with gr.Column():
+                        gr.Markdown("## 📊 Results")
+
                         gr.Markdown(
-                            """
-                            This demo classifies a product based on its description and image.
+                            """**💡 How to use this app**
+
+                            This app classifies a product based on its description and image.
                             - **Multimodal:** Uses both text and image for the most accurate prediction.
                             - **Text Only:** Uses only the product description.
                             - **Image Only:** Uses only the product image.
                             """
                         )
 
+                        output_label = gr.Label(
+                            label="Predict category", num_top_classes=5
+                        )
+
+        # 📌 ABOUT TAB
         with gr.TabItem("About"):
-            gr.Markdown(
-                """
-                ### About the Project
-                This project demonstrates a multimodal classification system trained on data from Best Buy. It uses a Multilayer Perceptron (MLP) model trained on pre-generated embeddings from a Text-based model (MiniLM-L6) and an Image-based model (ConvNeXtV2).
-                """
-            )
+            gr.Markdown("""
+## About This Project
 
-        with gr.TabItem("Architecture"):
-            gr.Markdown(
-                """
-                ### Model Architecture
-                This section would contain details about the MLP architecture, the embedding models used, and a diagram explaining the data flow.
-                """
-            )
+- This project is an image classification app powered by a Convolutional Neural Network (CNN).
+- Simply upload an image, and the app predicts its category from over 1,000 classes using a pre-trained ResNet50 model.
+- Originally developed as a multi-service ML system (FastAPI + Redis + Streamlit), this version has been adapted into a single Streamlit app for lightweight, cost-effective deployment on Hugging Face Spaces.
 
-    # Event listeners for conditional rendering
+## Model & Description
+- Model: ResNet50 (pre-trained on the ImageNet dataset with 1,000+ categories).
+- Pipeline: Images are resized, normalized, and passed to the model.
+- Output: The app displays the Top prediction with confidence score.
+ResNet50 is widely used in both research and production, making it an excellent showcase of deep learning capabilities and transferable ML skills.
+""")
+
+        # 📌 MODEL TAB
+        with gr.TabItem("Model"):
+            gr.Markdown("""
+## Original Architecture
+
+- FastAPI → REST API for image processing
+- Redis → Message broker for service communication
+- Streamlit → Interactive web UI
+- TensorFlow → Deep learning inference engine
+- Locust → Load testing & benchmarking
+- Docker Compose → Service orchestration
+
+## Simplified Version
+                        
+- Streamlit only → UI and model combined in a single app
+- TensorFlow (ResNet50) → Core prediction engine
+- Docker → Containerized for Hugging Face Spaces deployment
+This evolution demonstrates the ability to design a scalable microservices system and also adapt it into a lightweight single-service solution for cost-effective demos.
+""")
+
+    # 📌 FOOTER
+    gr.HTML("<hr>")
+    with gr.Row():
+        gr.Markdown("""
+<div style="text-align: center; margin-bottom: 1.5rem;">
+        <b>Connect with me:</b> 💼 <a href="https://www.linkedin.com/in/alex-turpo/" target="_blank">LinkedIn</a> • 
+        🐱 <a href="https://github.com/iBrokeTheCode" target="_blank">GitHub</a> • 
+        🤗 <a href="https://huggingface.co/iBrokeTheCode" target="_blank">Hugging Face</a>
+    </div>
+""")
+
+    # 📌 EVENT LISTENERS
     mode_radio.change(
-        fn=update_inputs, inputs=mode_radio, outputs=[text_input, image_input]
+        fn=update_inputs,
+        inputs=mode_radio,
+        outputs=[text_input, image_input],
     )
 
-    # Event listener for the classify button
-    classify_btn.click(
+    classify_button.click(
         fn=predict, inputs=[mode_radio, text_input, image_input], outputs=output_label
     )
+
 
 demo.launch()
