@@ -1,43 +1,33 @@
 import gradio as gr
 
 
-# Updated placeholder for the prediction function
+# Placeholder for the prediction function
 def predict(mode, text, image_path):
     """
-    This placeholder function now returns a dictionary
-    in the format expected by the gr.Label component.
+    This is a placeholder for the final prediction logic.
+    It will return a hardcoded dictionary to demonstrate the output format.
     """
-    # Hardcoded, sample output. In the future, this will come from your model.
-    multimodal_output = {
-        "abcat0100000": 0.05,
-        "abcat0200000": 0.10,
-        "abcat0300000": 0.20,
-        "abcat0400000": 0.45,
-        "abcat0500000": 0.20,
-    }
-    text_only_output = {
-        "abcat0100000": 0.08,
-        "abcat0200000": 0.15,
-        "abcat0300000": 0.25,
-        "abcat0400000": 0.35,
-        "abcat0500000": 0.17,
-    }
-    image_only_output = {
-        "abcat0100000": 0.10,
-        "abcat0200000": 0.20,
-        "abcat0300000": 0.30,
-        "abcat0400000": 0.25,
-        "abcat0500000": 0.15,
-    }
-
     if mode == "Multimodal":
-        return multimodal_output
+        result_text = "Result for Multimodal input: a category from a real model. Confidence: 0.95"
     elif mode == "Text Only":
-        return text_only_output
+        result_text = (
+            "Result for Text Only input: a category from a real model. Confidence: 0.92"
+        )
     elif mode == "Image Only":
-        return image_only_output
+        result_text = "Result for Image Only input: a category from a real model. Confidence: 0.88"
     else:
-        return {}  # Return an empty dictionary for no selection
+        result_text = "Please select a classification mode."
+
+    return {
+        "label": result_text,
+        "confidences": {
+            "abcat0100000": 0.05,
+            "abcat0200000": 0.10,
+            "abcat0300000": 0.20,
+            "abcat0400000": 0.45,
+            "abcat0500000": 0.20,
+        },
+    }
 
 
 # Function to update input visibility based on mode selection
