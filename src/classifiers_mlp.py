@@ -459,6 +459,7 @@ def train_mlp(
     # Train the model using the training data and validation data
     history = None
     if train_model:
+        # 📌  Train the model
         history = model.fit(
             train_loader,
             validation_data=test_loader,
@@ -469,7 +470,7 @@ def train_mlp(
         )
 
     if test_mlp_model:
-        # Test the model on the test set
+        # 📌 Test the model on the test set
         y_true, y_pred, y_prob = [], [], []
         for batch in test_loader:
             features, labels = batch
@@ -501,7 +502,7 @@ def train_mlp(
         if report:
             test_model(y_true, y_pred, y_prob, encoder=train_loader.encoder)
 
-        # Store results in a dataframe and save in the results folder
+        # 📌 Store results in a dataframe and save in the results folder
         if text_input_size is not None and image_input_size is not None:
             model_type = "multimodal"
         elif text_input_size is not None:
@@ -516,6 +517,14 @@ def train_mlp(
             # create results folder if it does not exist
             os.makedirs("results", exist_ok=True)
             results.to_csv(f"results/{model_type}_results.csv", index=False)
+
+        # 📌 Save the model
+        models_dir = "trained_models"
+        os.makedirs(models_dir, exist_ok=True)
+
+        model_filename = os.path.join(models_dir, f"{model_type}_model")
+        model.save(model_filename)
+        print(f"✅ {model_type} model saved successfully")
     else:
         test_accuracy, f1, macro_auc = None, None, None
 

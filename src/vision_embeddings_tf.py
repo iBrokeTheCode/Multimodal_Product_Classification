@@ -372,7 +372,7 @@ def get_embeddings_df(
     path="data/images",
     dataset_name="",
     backbone="resnet50",
-    directory="Embeddings",
+    directory="embeddings",
     image_files=None,
 ):
     """
@@ -394,7 +394,7 @@ def get_embeddings_df(
         The name of the backbone model to use for generating embeddings. The default is 'resnet50'.
         Other possible options include models like 'convnext_tiny', 'vit_base', etc.
     directory : str, optional
-        The root directory where the embeddings CSV file will be saved. Default is 'Embeddings'.
+        The root directory where the embeddings CSV file will be saved. Default is 'embeddings'.
     image_files : list, optional
         A pre-defined list of image file names to process. If not provided, the function will automatically detect
         image files in the `path` directory.
