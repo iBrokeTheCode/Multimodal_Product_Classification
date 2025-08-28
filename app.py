@@ -1,5 +1,23 @@
 import gradio as gr
 
+# 📌 CUSTOM CSS
+css_code = """
+#footer-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--background-fill-primary);
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color-primary);
+}
+
+.gradio-container {
+    padding-bottom: 70px !important;
+}
+"""
+
 
 # 📌 FUNCTIONS
 def predict(mode, text, image_path):
@@ -54,16 +72,23 @@ def update_inputs(mode: str):
 with gr.Blocks(
     title="Multimodal Product Classification",
     theme=gr.themes.Ocean(),
+    css=css_code,
 ) as demo:
     with gr.Tabs():
         # 📌 APP TAB
         with gr.TabItem("App"):
-            gr.Markdown("# 🛍️ Multimodal Product Classification")
+            gr.Markdown("""
+                <div style="text-align: center;">
+                    <h1>🛍️ Multimodal Product Classification</h1>
+                </div>
+                <br><br>
+                """)
 
             with gr.Row(equal_height=True):
+                # 📌 CLASSIFICATION INPUTS COLUMN
                 with gr.Column():
                     with gr.Column():
-                        gr.Markdown("## ⚙️ Classification Inputs")
+                        gr.Markdown("## 📝 Classification Inputs")
 
                         mode_radio = gr.Radio(
                             choices=["Multimodal", "Text Only", "Image Only"],
@@ -80,7 +105,7 @@ with gr.Blocks(
                             label="Product Image",
                             type="filepath",
                             visible=True,
-                            height=300,
+                            height=350,
                             width="100%",
                         )
 
@@ -88,6 +113,7 @@ with gr.Blocks(
                             "✨ Classify Product", variant="primary"
                         )
 
+                # 📌 RESULTS COLUMN
                 with gr.Column():
                     with gr.Column():
                         gr.Markdown("## 📊 Results")
@@ -101,6 +127,8 @@ with gr.Blocks(
                             - **Image Only:** Uses only the product image.
                             """
                         )
+
+                        gr.HTML("<hr>")
 
                         output_label = gr.Label(
                             label="Predict category", num_top_classes=5
@@ -143,8 +171,8 @@ This evolution demonstrates the ability to design a scalable microservices syste
 """)
 
     # 📌 FOOTER
-    gr.HTML("<hr>")
-    with gr.Row():
+    # gr.HTML("<hr>")
+    with gr.Row(elem_id="footer-container"):
         gr.Markdown("""
 <div style="text-align: center; margin-bottom: 1.5rem;">
         <b>Connect with me:</b> 💼 <a href="https://www.linkedin.com/in/alex-turpo/" target="_blank">LinkedIn</a> • 
