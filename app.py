@@ -11,6 +11,7 @@ css_code = """
     background-color: var(--background-fill-primary);
     padding: var(--spacing-md);
     border-top: 1px solid var(--border-color-primary);
+    text-align: center;
 }
 
 .gradio-container {
@@ -173,8 +174,8 @@ This evolution demonstrates the ability to design a scalable microservices syste
     # 📌 FOOTER
     # gr.HTML("<hr>")
     with gr.Row(elem_id="footer-container"):
-        gr.Markdown("""
-<div style="text-align: center; margin-bottom: 1.5rem;">
+        gr.HTML("""
+<div>
         <b>Connect with me:</b> 💼 <a href="https://www.linkedin.com/in/alex-turpo/" target="_blank">LinkedIn</a> • 
         🐱 <a href="https://github.com/iBrokeTheCode" target="_blank">GitHub</a> • 
         🤗 <a href="https://huggingface.co/iBrokeTheCode" target="_blank">Hugging Face</a>
