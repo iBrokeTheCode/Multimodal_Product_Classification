@@ -105,14 +105,18 @@ with gr.Blocks(
                 examples=[
                     [
                         "Multimodal",
-                        "Red Electric Guitar – Stratocaster Style, 6-String, White Pickguard, Solid-Body, Ideal for Rock & Roll",
-                        "./assets/sample.jpeg",
+                        'Laptop Asus - 15.6" / CPU I9 / 2Tb SSD / 32Gb RAM / RTX 2080',
+                        "./assets/sample2.jpg",
                     ],
-                    ["Image Only", None, "./assets/sample.jpeg"],
                     [
-                        "Text Only",
+                        "Multimodal",
                         "Red Electric Guitar – Stratocaster Style, 6-String, White Pickguard, Solid-Body, Ideal for Rock & Roll",
-                        None,
+                        "./assets/sample1.jpg",
+                    ],
+                    [
+                        "Multimodal",
+                        "Portable Wireless Speaker / JBL / Black / High Quality Sound",
+                        "./assets/sample3.jpg",
                     ],
                 ],
                 label="Select an example to pre-fill the inputs, then click the 'Classify Product' button.",
