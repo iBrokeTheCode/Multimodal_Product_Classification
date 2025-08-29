@@ -1,4 +1,4 @@
-import os
+from json import load
 from typing import Any, Dict, Optional
 
 from numpy import array, expand_dims, float32, ndarray, transpose, zeros
@@ -8,14 +8,61 @@ from tensorflow import constant
 from tensorflow.keras.models import load_model
 from transformers import TFConvNextV2Model
 
-# TODO: Hardcoded class labels for the output, as discussed
-CLASS_LABELS = [
-    "abcat0100000",
-    "abcat0200000",
-    "abcat0300000",
-    "abcat0400000",
-    "abcat0500000",
-]
+# 📌 GLOBAL VARIABLES (categories)
+CATEGORY_MAP: Dict[str, str] = {}
+CLASS_LABELS = []
+
+
+def build_category_map(categories_json_path: str):
+    """
+    Builds a flat dictionary and a list of category labels by traversing the hierarchical categories.json file.
+    """
+    global CATEGORY_MAP, CLASS_LABELS
+
+    try:
+        with open(categories_json_path, "r") as f:
+            categories_data = load(f)
+    except FileNotFoundError:
+        print(
+            f"❌ Error: {categories_json_path} not found. Using hardcoded labels as fallback."
+        )
+        return
+
+    category_map = {}
+
+    model_trained_ids = [
+        "abcat0100000",
+        "abcat0200000",
+        "abcat0207000",
+        "abcat0300000",
+        "abcat0400000",
+        "abcat0500000",
+        "abcat0700000",
+        "abcat0800000",
+        "abcat0900000",
+        "cat09000",
+        "pcmcat128500050004",
+        "pcmcat139900050002",
+        "pcmcat242800050021",
+        "pcmcat252700050006",
+        "pcmcat312300050015",
+        "pcmcat332000050000",
+    ]
+
+    def traverse_categories(categories):
+        for category in categories:
+            category_map[category["id"]] = category["name"]
+            if "subCategories" in category and category["subCategories"]:
+                traverse_categories(category["subCategories"])
+            if "path" in category and category["path"]:
+                for path_item in category["path"]:
+                    category_map[path_item["id"]] = path_item["name"]
+
+    traverse_categories(categories_data)
+
+    CATEGORY_MAP = category_map
+    CLASS_LABELS = model_trained_ids
+
 
 # 📌 LOAD MODELS
 print("💬 Loading embedding models...")
@@ -39,6 +86,9 @@ try:
 except Exception as e:
     print(f"❌ Error loading classification models: {e}")
     text_model, image_model, multimodal_model = None, None, None
+
+# Generate category map and class labels list
+build_category_map("./data/raw/categories.json")
 
 
 # 📌 EMBEDDING FUNCTIONS
@@ -139,38 +189,18 @@ def predict(
 
     # Format the output into a dictionary with labels and probabilities
     # The model's output is a 2D array, so we take the first row (index 0)
-    prediction_dict = dict(zip(CLASS_LABELS, predictions[0]))
+    prediction_dict_raw = dict(zip(CLASS_LABELS, predictions[0]))
 
-    return prediction_dict
+    #  Map the raw IDs to human-readable names
+    prediction_dict_mapped = {}
+    for class_id, probability in prediction_dict_raw.items():
+        # Get the human-readable name, defaulting to the raw ID if not found
+        category_name = CATEGORY_MAP.get(class_id, class_id)
+        prediction_dict_mapped[category_name] = probability
 
-
-# 📌 SANITY CHECKS
-if __name__ == "__main__":
-    print("\n--- Running sanity checks for predictor.py ---")
-
-    # Check text embedding function
-    print("\n--- Testing get_text_embeddings ---")
-    sample_text = (
-        "A sleek silver laptop with a large screen and high-resolution display."
+    # Sort the dictionary by probability in descending order for a cleaner display
+    sorted_predictions = dict(
+        sorted(prediction_dict_mapped.items(), key=lambda item: item[1], reverse=True)
     )
-    text_emb = get_text_embeddings(sample_text)
-    print(f"Embedding shape for a normal string: {text_emb.shape}")
-    empty_text_emb = get_text_embeddings("")
-    print(f"Embedding shape for an empty string: {empty_text_emb.shape}")
-    spaces_text_emb = get_text_embeddings("   ")
-    print(f"Embedding shape for a string with spaces: {spaces_text_emb.shape}")
 
-    # Check image embedding function
-    print("\n--- Testing get_image_embeddings ---")
-    test_image_path = "test.jpeg"  # Ensure this file exists for the test to pass
-    if os.path.exists(test_image_path):
-        image_emb = get_image_embeddings(test_image_path)
-        print(f"✅ Embedding shape for an image file: {image_emb.shape}")
-    else:
-        print(
-            f"⚠️ Warning: Test image file not found at {test_image_path}. Skipping image embedding test."
-        )
-
-    empty_image_emb = get_image_embeddings(None)
-    print(f"Embedding shape for a None input: {empty_image_emb.shape}")
-    print("--- Sanity checks complete. ---")
+    return sorted_predictions

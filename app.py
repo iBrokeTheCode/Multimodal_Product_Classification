@@ -64,6 +64,7 @@ with gr.Blocks(
                         text_input = gr.Textbox(
                             label="Product Description:",
                             placeholder="e.g., Apple iPhone 15 Pro Max 256GB",
+                            lines=2,
                         )
 
                         image_input = gr.Image(
