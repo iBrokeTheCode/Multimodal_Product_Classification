@@ -36,7 +36,7 @@ This project showcases the power of combining different data types to build a mo
 > - Check out the deployed app here: 👉️ [Multimodal Product Classification App](https://huggingface.co/spaces/iBrokeTheCode/Multimodal_Product_Classification) 👈️
 > - Check out the Jupyter Notebook for a detailed walkthrough of the project here: 👉️ [Jupyter Notebook](https://huggingface.co/spaces/iBrokeTheCode/Multimodal_Product_Classification/blob/main/notebook_guide.ipynb) 👈️
 
-![App](./assets/app-demo.png)
+![App](./assets/app-demo.jpg)
 
 ## 2. Methodology & Key Features
 
