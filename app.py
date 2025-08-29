@@ -41,7 +41,7 @@ with gr.Blocks(
 ) as demo:
     with gr.Tabs():
         # 📌 APP TAB
-        with gr.TabItem("App"):
+        with gr.TabItem("🚀 App"):
             gr.Markdown("""
                 <div style="text-align: center;">
                     <h1>🛍️ Multimodal Product Classification</h1>
@@ -101,39 +101,62 @@ with gr.Blocks(
                         )
 
         # 📌 ABOUT TAB
-        with gr.TabItem("About"):
+        with gr.TabItem("ℹ️ About"):
             gr.Markdown("""
-## About This Project
+## Project Overview
+                        
+- This project is a multimodal product classification system for Best Buy products. 
+- The core objective is to categorize products using both their text descriptions and images. 
+- The system was trained on a dataset of **almost 50,000** products and their corresponding images to generate embeddings and train the classification models.
 
-- This project is an image classification app powered by a Convolutional Neural Network (CNN).
-- Simply upload an image, and the app predicts its category from over 1,000 classes using a pre-trained ResNet50 model.
-- Originally developed as a multi-service ML system (FastAPI + Redis + Streamlit), this version has been adapted into a single Streamlit app for lightweight, cost-effective deployment on Hugging Face Spaces.
+<br>
 
-## Model & Description
-- Model: ResNet50 (pre-trained on the ImageNet dataset with 1,000+ categories).
-- Pipeline: Images are resized, normalized, and passed to the model.
-- Output: The app displays the Top prediction with confidence score.
-ResNet50 is widely used in both research and production, making it an excellent showcase of deep learning capabilities and transferable ML skills.
+## Technical Workflow
+                        
+1.  **Data Preprocessing:** Product descriptions and images are extracted from the dataset, and a `categories.json` file is used to map product IDs to human-readable category names.
+2.  **Embedding Generation:**
+    - **Text:** A pre-trained `SentenceTransformer` model (`all-MiniLM-L6-v2`) is used to generate dense vector embeddings from the product descriptions.
+    - **Image:** A pre-trained computer vision model from the Hugging Face `transformers` library (`TFConvNextV2Model`) is used to extract image features.
+3.  **Model Training:** The generated text and image embeddings are then used to train a multi-layer perceptron (MLP) model for classification. Separate models were trained for text-only, image-only, and multimodal (combined embeddings) classification.
+4.  **Deployment:** The trained models are deployed via a Gradio web interface, allowing for live prediction on new product data.
+
+<br>
+                                   
+> **💡 Want to explore the process in detail?**   
+> See the full 👉 [Jupyter notebook](https://huggingface.co/spaces/iBrokeTheCode/Multimodal_Product_Classification/blob/main/notebook_guide.ipynb) 👈️ for an end-to-end walkthrough, including Exploratory Data Analysis, embeddings generation, models training, evaluation, and model selection.
 """)
 
         # 📌 MODEL TAB
-        with gr.TabItem("Model"):
+        with gr.TabItem("🎯 Model"):
             gr.Markdown("""
-## Original Architecture
+## Model Details
+The final classification is performed by a Multi-layer Perceptron (MLP) trained on the embeddings. This architecture allows the model to learn the relationships between the textual and visual features.
 
-- FastAPI → REST API for image processing
-- Redis → Message broker for service communication
-- Streamlit → Interactive web UI
-- TensorFlow → Deep learning inference engine
-- Locust → Load testing & benchmarking
-- Docker Compose → Service orchestration
-
-## Simplified Version
+<br>
                         
-- Streamlit only → UI and model combined in a single app
-- TensorFlow (ResNet50) → Core prediction engine
-- Docker → Containerized for Hugging Face Spaces deployment
-This evolution demonstrates the ability to design a scalable microservices system and also adapt it into a lightweight single-service solution for cost-effective demos.
+## Performance Summary
+                        
+The following table summarizes the performance of all models trained in this project.
+<br>
+
+| Model               | Modality     | Accuracy | Macro Avg F1-Score | Weighted Avg F1-Score |
+| :------------------ | :----------- | :------- | :----------------- | :-------------------- |
+| Random Forest       | Text         | 0.90     | 0.83               | 0.90                  |
+| Logistic Regression | Text         | 0.90     | 0.84               | 0.90                  |
+| Random Forest       | Image        | 0.80     | 0.70               | 0.79                  |
+| Random Forest       | Combined     | 0.89     | 0.79               | 0.89                  |
+| Logistic Regression | Combined     | 0.89     | 0.83               | 0.89                  |
+| **MLP** | **Image** | **0.84** | **0.77** | **0.84** |
+| **MLP** | **Text** | **0.92** | **0.87** | **0.92** |
+| **MLP** | **Combined** | **0.92** | **0.85** | **0.92** |
+
+<br>
+                        
+## Conclusion
+                        
+- Based on the overall results, the MLP models consistently outperformed their classical machine learning counterparts, demonstrating their ability to learn intricate, non-linear relationships within the data.
+- Both the Text MLP and Combined MLP models achieved the highest accuracy and weighted F1-score, confirming their superior ability to classify the products.
+- This modular approach demonstrates the ability to handle various data modalities and evaluate the contribution of each to the final prediction.
 """)
 
     # 📌 FOOTER
