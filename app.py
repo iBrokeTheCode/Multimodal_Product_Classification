@@ -19,6 +19,10 @@ css_code = """
 .gradio-container {
     padding-bottom: 70px !important;
 }
+
+.center {
+    text-align: center;
+}
 """
 
 
@@ -42,12 +46,13 @@ with gr.Blocks(
     with gr.Tabs():
         # 📌 APP TAB
         with gr.TabItem("🚀 App"):
-            gr.Markdown("""
-                <div style="text-align: center;">
-                    <h1>🛍️ Multimodal Product Classification</h1>
-                </div>
-                <br><br>
-                """)
+            with gr.Row(elem_classes="center"):
+                gr.HTML("""
+                    <div>
+                        <h1>🛍️ Multimodal Product Classification</h1>
+                    </div>
+                    <br><br>
+                    """)
 
             with gr.Row(equal_height=True):
                 # 📌 CLASSIFICATION INPUTS COLUMN
