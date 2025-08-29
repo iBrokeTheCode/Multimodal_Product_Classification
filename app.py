@@ -1,6 +1,6 @@
 import gradio as gr
 
-from predictor import predict
+from app_predictor import predict
 
 # 📌 CUSTOM CSS
 css_code = """
@@ -56,7 +56,7 @@ with gr.Blocks(
                         gr.Markdown("## 📝 Classification Inputs")
 
                         mode_radio = gr.Radio(
-                            choices=["Multimodal", "Text Only", "Image Only"],
+                            choices=["Multimodal", "Image Only", "Text Only"],
                             value="Multimodal",
                             label="Choose Classification Mode:",
                         )
@@ -64,14 +64,14 @@ with gr.Blocks(
                         text_input = gr.Textbox(
                             label="Product Description:",
                             placeholder="e.g., Apple iPhone 15 Pro Max 256GB",
-                            lines=2,
+                            lines=1,
                         )
 
                         image_input = gr.Image(
                             label="Product Image",
                             type="filepath",
                             visible=True,
-                            height=350,
+                            height=300,
                             width="100%",
                         )
 
@@ -88,9 +88,9 @@ with gr.Blocks(
                             """**💡 How to use this app**
 
                             This app classifies a product based on its description and image.
-                            - **Multimodal:** Uses both text and image for the most accurate prediction.
-                            - **Text Only:** Uses only the product description.
-                            - **Image Only:** Uses only the product image.
+                            - **Multimodal:** The most accurate mode, using both the image and a detailed description for prediction.
+                            - **Image Only:** Highly effective for visual products, relying solely on the product image.
+                            - **Text Only:** Less precise, this mode requires a very descriptive and specific product description to achieve good results.
                             """
                         )
 
@@ -99,6 +99,28 @@ with gr.Blocks(
                         output_label = gr.Label(
                             label="Predict category", num_top_classes=5
                         )
+
+            # 📌 EXAMPLES SECTION
+            gr.Examples(
+                examples=[
+                    [
+                        "Multimodal",
+                        "Red Electric Guitar – Stratocaster Style, 6-String, White Pickguard, Solid-Body, Ideal for Rock & Roll",
+                        "./assets/sample.jpeg",
+                    ],
+                    ["Image Only", None, "./assets/sample.jpeg"],
+                    [
+                        "Text Only",
+                        "Red Electric Guitar – Stratocaster Style, 6-String, White Pickguard, Solid-Body, Ideal for Rock & Roll",
+                        None,
+                    ],
+                ],
+                label="Select an example to pre-fill the inputs, then click the 'Classify Product' button.",
+                inputs=[mode_radio, text_input, image_input],
+                # outputs=output_label,
+                # fn=predict,
+                # cache_examples=True,
+            )
 
         # 📌 ABOUT TAB
         with gr.TabItem("ℹ️ About"):
@@ -137,6 +159,7 @@ The final classification is performed by a Multi-layer Perceptron (MLP) trained 
 ## Performance Summary
                         
 The following table summarizes the performance of all models trained in this project.
+                        
 <br>
 
 | Model               | Modality     | Accuracy | Macro Avg F1-Score | Weighted Avg F1-Score |
